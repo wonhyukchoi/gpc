@@ -1,15 +1,13 @@
-# Garbage-Collected Pico-C 
-This is the repository for the standard and compiler for Garbage-Collected Pico-C (`GPC`).
+# GPC
+This is the repository for the standard, interpreter, and compiler for the GCP language.
 
-## Why "Pico"?
-The "Pico" in `GPC` is because `GPC` only supports a very limited subset of C constructs.
-It does support:
-* Primitives: `int`, `bool`, `char`
-* Control flows: `if`, `for`, `while`
-* `array`s and `struct`s
-* `IO`, `string`, `vector`, and `dict` standard libraries
-
-In particular, `GPC` should be able to implement most (if not all) of the common data structures & algorithms problems.
+## Supported constructs
+GPC supports:
+* Primitive types: `int`, `float`, `bool`, `char`
+* Control flow statements: `if`, `else if`, `else`, `for`, `while`
+* Abstract Data Types (pattern matching) and Structs
+* Immutable-by-default
+* Standard library: `IO`, `string`, `vector`, `dict`, which follow the functional `map`, `filter`, `fold` idioms
 
 ## Runtime
 `GPC` is a garbage-collected language.
