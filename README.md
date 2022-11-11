@@ -18,7 +18,7 @@ GPC syntax is largely influenced by `Rust`.
 import Vector from vector;
 import fold from functional;
 
-int add(int x, int y){
+int add(int x, int y) {
   x + y;
 }
 
@@ -42,7 +42,7 @@ bool evalBoolean(Boolean boolean) {
     Not b => !evalBoolean(b),
     And b1 b2 => evalBoolean(b1) && evalBoolean(b2),
     Or b1 b2 => evalBoolean(b1) || evalBoolean(b2),
-  }
+  };
 }
 
 ```
