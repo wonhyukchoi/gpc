@@ -1,5 +1,5 @@
 # GPC
-This is the repository for the standard, interpreter, and compiler for the GCP language.
+This is the repository for the standard, interpreter, and compiler for the GPC language.
 
 ## Supported constructs
 GPC supports:
