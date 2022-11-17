@@ -1,15 +1,12 @@
-# GPC
-This is the repository for the standard, interpreter, and compiler for the GPC language.
+# Gust
+This is the repository for the standard, interpreter, compiler, and the standard library for the `Gust` language.
 
-## Supported constructs
-GPC supports:
-* Primitive types: `int`, `float`, `bool`, `char`
-* Control flow statements: `if`, `else if`, `else`, `for`, `while`
-* Abstract Data Types (pattern matching) and Structs
-* Immutable-by-default
-* Standard library
-    * `IO`, `string`, `vector`, `dict`
-    *  Functional `map`, `filter`, `fold` idioms with higher-order functions
+`Gust` is designed to be an safe and fast application-building language with many benefits:
+* _Safe_: immutable by default, and garbage collection avoids most segmentation faults.
+* _Prototypable_: `Gust` can easily be interpreted, making it easy to prototype.
+* _Fast_: When needed, `Gust` can be compiled 
+* _Expressive_: Use functional idioms of `map`, `filter`, and `fold`, abstract data types, and higher order functions.
+* _Easy_: Garbage collection: you don't need to worry about memory management. Syntax: familiar syntax you've been using all your software career.
 
 ## Syntax
 GPC syntax is largely influenced by `Rust`.
@@ -29,7 +26,7 @@ int sum(Vector<int> input) {
 
 ### Example 2
 ```
-adt Boolean {
+enum Boolean {
   Boolean bool,
   Not Boolean,
   And Boolean Boolean,
