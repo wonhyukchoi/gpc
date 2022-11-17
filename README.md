@@ -52,3 +52,29 @@ This means that `GPC` requires a runtime; the runtime is implemented in `Rust`.
 
 ## Compiler
 The compiler frontend is written in `Haskell`, which emits `LLVM` code.
+
+## Implementation Milestones
+[ ] Sanity Test
+    [ ] Basic programs with just primitives: `int`, `bool`, `char`
+    [ ] Parser
+    [ ] Type Checker
+    [ ] Evalualtor
+    [ ] `--i` (`--intepreter`) flag
+[ ] Debug flags `--debug`, `--ast`, 
+[ ] Language Server Protocol
+[ ] Compile to LLVM
+[ ] Abstract Data Types
+[ ] Garbage Collection
+[ ] Standard Library
+    [ ] String
+    [ ] Vector
+    [ ] I/O
+    [ ] Functional idioms
+        [ ] Map
+        [ ] Filter
+        [ ] Fold
+[ ] Bootstrapping
+    [ ] Lexer
+    [ ] Parser
+    [ ] Type Checker
+    [ ] Interpreter
