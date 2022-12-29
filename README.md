@@ -60,6 +60,10 @@ The compiler frontend is written in `Haskell`, which emits `LLVM` code.
     - [ ] Type Checker
     - [ ] Evalualtor
     - [ ] `--i` (`--intepreter`) flag
+- [ ] If statements
+    - [ ] `if`
+    - [ ] `else`
+    - [ ] `elif`
 - [ ] Debug flags `--debug`, `--ast`, 
 - [ ] Language Server Protocol
 - [ ] Compile to LLVM
