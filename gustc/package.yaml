@@ -1,5 +1,5 @@
 name:                gustc
-version:             0.1.0.0
+version:             "0.1.0.0"
 github:              "wonhyukchoi/gust"
 license:             BSD3
 author:              "Wonhyuk Choi"
@@ -57,5 +57,10 @@ tests:
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
+    - -Wall
     dependencies:
     - gustc
+    - filepath
+    - directory
+    - hspec
+    - hspec-megaparsec

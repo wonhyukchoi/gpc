@@ -1,2 +1,6 @@
+module Main (main) where
+
+import ParserTest(parseTests)
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = parseTests

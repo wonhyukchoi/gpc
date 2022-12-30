@@ -59,7 +59,7 @@ data Statement
   | While Expr Statement
   deriving (Show, Eq)
 
-data Struct = Struct {structName :: Text, fields :: [Bind]} deriving (Show, Eq)
+-- data Struct = Struct {structName :: Text, fields :: [Bind]} deriving (Show, Eq)
 
 data Function = Function { funcType :: Type
                          , funcName :: Text
@@ -68,4 +68,5 @@ data Function = Function { funcType :: Type
                          }
                        deriving (Show, Eq)
 
-data Program = Program [Struct] [Function] deriving (Eq, Show)
+-- data Program = Program [Struct] [Function] deriving (Eq, Show)
+newtype Program = Program [Function] deriving (Eq, Show)
