@@ -8,13 +8,20 @@ module Parser.Lexer where
 
 import qualified Text.Megaparsec.Char.Lexer as L
 
-import Data.Text ( Text )
+import Data.Text ( Text, pack )
 
 import Control.Monad ( void )
 
-import Text.Megaparsec.Char ( space1, char )
+import Text.Megaparsec.Char ( space1, letterChar, char , string, alphaNumChar )
 
-import Text.Megaparsec ( single, between, manyTill)
+import Text.Megaparsec ( single
+                       , many
+                       , between
+                       , manyTill
+                       , try
+                       , notFollowedBy
+                       , (<|>)
+                       )
 
 import Parser.Common ( Parser )
 
@@ -80,3 +87,18 @@ intLiteral = L.signed (return ()) $ lexeme L.decimal
 
 floatLiteral :: Parser Double
 floatLiteral = L.signed (return ()) $ lexeme L.float
+
+reserved :: Text -> Parser ()
+reserved word = (lexeme . try) (string word *> notFollowedBy alphaNumChar)
+
+identifier :: Parser Text
+identifier = lexeme rawIdentifier
+
+rawIdentifier :: Parser Text
+rawIdentifier = try (p >>= notReserved)
+ where
+  p = fmap pack $ (:) <$> letterChar
+                        <*> many (alphaNumChar <|> single '_')
+  notReserved x = if x `elem` reservedWords
+    then fail $ "keyword " <> show x <> " cannot be an identifier"
+    else return x

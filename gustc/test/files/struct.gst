@@ -3,3 +3,5 @@ struct xyz {
     float y;
     char z;
 }
+
+void main() {}

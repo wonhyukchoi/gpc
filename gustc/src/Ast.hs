@@ -29,11 +29,11 @@ data Expr
   | StrLiteral Text
   | FloatLiteral Double
   | CharLiteral Char
-  | BoolLitearl Bool
+  | BoolLiteral Bool
   | Var Text
-  | BinOp BinOp Expr Expr
+  | BinaryOp BinOp Expr Expr
   | UnaryOp UnaryOp Expr
-  | FunctionCall Text [Expr]
+  -- | FunctionCall Text [Expr]
   deriving (Eq, Show)
 
 data Type
@@ -42,21 +42,20 @@ data Type
   | BoolType
   | CharType
   | StrType
-  | StructType
+  | VoidType
+  | StructType Text
   deriving (Show, Eq)
 
 data Bind = Bind {bindType :: Type, bindName :: Text} deriving (Show, Eq)
 
 data Statement
-  = Sequence [Statement]
-  | Expr Expr
-  | Return Expr
+  = Expr Expr
+  -- | Return Expr
   | Declare Bind 
   | Define Bind Expr
-  | Assignment Text Expr
-  | If Expr Statement
-  | For Expr Expr Expr Statement
-  | While Expr Statement
+  -- | If Expr Statement
+  -- | For Expr Expr Expr Statement
+  -- | While Expr Statement
   deriving (Show, Eq)
 
 -- data Struct = Struct {structName :: Text, fields :: [Bind]} deriving (Show, Eq)
@@ -64,7 +63,7 @@ data Statement
 data Function = Function { funcType :: Type
                          , funcName :: Text
                          , args     :: [Bind]
-                         , body     :: Statement
+                         , body     :: [Statement]
                          }
                        deriving (Show, Eq)
 

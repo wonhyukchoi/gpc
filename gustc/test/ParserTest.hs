@@ -33,4 +33,4 @@ parseTests = do
       mapM TextIO.readFile absolutePaths
     
     parseSucceeds input =
-      it "Parser Test: " $ parse pProgram "" `shouldSucceedOn` input
+      it ">> " $ parse pProgram "" `shouldSucceedOn` input

@@ -3,9 +3,9 @@ This is the repository for the standard, interpreter, compiler, and the standard
 
 `Gust` is designed to be an safe and fast application-building language with many benefits:
 * _Safe_: immutable by default, and garbage collection avoids most segmentation faults.
-* _Prototypable_: `Gust` can easily be interpreted, making it easy to prototype.
+* _Prototypable_: `Gust` can be interpreted, making it easy to prototype.
 * _Fast_: When needed, `Gust` can be compiled 
-* _Expressive_: Use functional idioms of `map`, `filter`, and `fold`, abstract data types, and higher order functions.
+* _Expressive_: Use functional idioms of `map`, `filter`, and `fold`, abstract data types, and higher order functions. Use `trait`s for polymorphism.
 * _Easy_: Garbage collection: you don't need to worry about memory management. Syntax: familiar syntax you've been using all your software career.
 
 ## Syntax
@@ -54,19 +54,17 @@ This means that `GPC` requires a runtime; the runtime is implemented in `Rust`.
 The compiler frontend is written in `Haskell`, which emits `LLVM` code.
 
 ## Implementation Milestones
-- [ ] Sanity Test
-    - [ ] Basic programs with just primitives: `int`, `bool`, `char`
-    - [ ] Parser
+- [ ] Sanity Test: basic programs with just primitives
+    - [x] Parser
     - [ ] Type Checker
-    - [ ] Evalualtor
     - [ ] `--i` (`--intepreter`) flag
-- [ ] If statements
+- [ ] Conditionals
     - [ ] `if`
     - [ ] `else`
     - [ ] `elif`
-- [ ] Debug flags `--debug`, `--ast`, 
-- [ ] Language Server Protocol
+- [ ] Debug flags `--debug`, `--ast`
 - [ ] Compile to LLVM
+- [ ] Traits
 - [ ] Abstract Data Types
 - [ ] Garbage Collection
 - [ ] Standard Library
@@ -77,6 +75,9 @@ The compiler frontend is written in `Haskell`, which emits `LLVM` code.
         - [ ] Map
         - [ ] Filter
         - [ ] Fold
+- [ ] Developer Tools
+    - [ ] Syntax Highlighting
+    - [ ] Language Server Protocol
 - [ ] Bootstrapping
     - [ ] Lexer
     - [ ] Parser
