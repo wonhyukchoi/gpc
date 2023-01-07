@@ -24,6 +24,9 @@ dependencies:
 - text
 - megaparsec
 - parser-combinators
+- containers
+- transformers
+- mtl
 
 ghc-options:
 - -Wall

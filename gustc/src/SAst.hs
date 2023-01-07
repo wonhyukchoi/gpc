@@ -25,7 +25,7 @@ data SExpr
   deriving (Eq, Show)
 
 data SStatement
-  = SEXpr SExpr
+  = SExpr SExpr
   | SDecl Bind
   | SDef  Bind SExpr
   deriving (Eq, Show)
@@ -37,4 +37,4 @@ data SFunction = SFunction { sFuncType :: Type
                            }
                           deriving (Show, Eq)
 
-newtype SProgram = SProgram [Function] deriving (Eq, Show)
+newtype SProgram = SProgram [SFunction] deriving (Eq, Show)
