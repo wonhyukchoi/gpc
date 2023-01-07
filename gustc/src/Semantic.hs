@@ -99,8 +99,12 @@ checkExpr = \case
 	    then SBinaryOp binOp <$> checkBoolean lhs' <*> checkBoolean rhs'
 		else undefined -- TODO
   UnaryOp unaryOp expr -> do
-    sexpr <- checkExpr expr
-	if 
+    sExpr <- checkExpr expr
+	if hasNumericArg unaryOp
+	  then SUnaryOp unaryOp <$> checkNumeric sExpr
+	  else hasBooleanArg unaryOp
+	    then SUnaryOp unaryOp <$> checkBoolean sExpr
+		else undefined -- TODO
 
 checkNumeric :: SExpr -> Context Bool
 checkNumeric = undefined
