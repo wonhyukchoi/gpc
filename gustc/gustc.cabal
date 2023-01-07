@@ -29,6 +29,9 @@ library
       Parser.Common
       Parser.Lexer
       Parser.Parser
+      SAst
+      Semantic
+      Static
   other-modules:
       Paths_gustc
   hs-source-dirs:
