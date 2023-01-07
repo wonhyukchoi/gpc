@@ -1,3 +1,6 @@
+{-# Language LambdaCase #-}
+
+-----------------------------------------------------------------------------
 module Ast where
 
 -----------------------------------------------------------------------------
@@ -22,7 +25,33 @@ data BinOp
   | Or
   deriving (Show, Eq)
 
+hasNumericArgs :: BinOp -> Bool
+hasNumericArgs = \case
+  Add  -> True
+  Sub  -> True
+  Div  -> True
+  Power-> True
+  Lt   -> True
+  Gt   -> True
+  Lte  -> True
+  Gte  -> True
+  _    -> False
+
+hasBooleanArgs :: BinOp -> Bool
+hasBooleanArgs = \case
+  And -> True
+  Or  -> True
+  _   -> False
+
 data UnaryOp = Neg | Not deriving (Show, Eq)
+
+hasNumericArg :: UnaryOp -> Bool
+hasNumericArg Neg = True
+hasNumericArg _   = False
+
+hasBooleanArg :: UnaryOp -> Bool
+hasBooleanArg Not = True
+hasBooleanArg _   = False
 
 data Expr
   = IntLiteral Integer

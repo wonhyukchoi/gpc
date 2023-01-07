@@ -64,6 +64,9 @@ data SemanticError
 
 type Context = ExceptT SemanticError (State Env)
 
+defined :: Text -> Map.Map Text a -> Bool
+defined name definedNames = Map.member name definedNames
+
 -- data BindingKind = Duplicate | Void deriving (Show)
 -- data SymbolKind = Var | Func deriving (Show)
 
@@ -72,7 +75,7 @@ type Context = ExceptT SemanticError (State Env)
 
 -- | Semantic analysis.
 -- Transforms an AST into a SAst.
-analyze :: Program -> Either SemanticError SProgram
+analyze :: Program -> Context SProgram
 analyze (Program functions) = SProgram <$> mapM checkFunction functions
 
 checkExpr :: Expr -> Context SExpr
@@ -87,24 +90,38 @@ checkExpr = \case
     if defined variable vars
       then return $ LValue $ SVar variable
       else throwE $ UndefinedSymbol variable expr
-  BinaryOp binOp lhs rhs -> SBinaryOp binOp <$> checkExpr lhs <*> checkExpr rhs
-  UnaryOp unaryOp expr -> SUnaryOp unaryOp <$> checkExpr expr
+  BinaryOp binOp lhs rhs -> do
+    lhs' <- checkExpr lhs
+    rhs' <- checkExpr rhs
+	if hasNumericArgs binOp
+	  then SBinaryOp binOp <$> checkNumeric lhs' <*> checkNumeric rhs'
+	  else if hasBooleanArgs binOp
+	    then SBinaryOp binOp <$> checkBoolean lhs' <*> checkBoolean rhs'
+		else undefined -- TODO
+  UnaryOp unaryOp expr -> do
+    sexpr <- checkExpr expr
+	if 
 
-defined :: Text -> Map.Map Text a -> Bool
-defined name definedNames = Map.member name definedNames
+checkNumeric :: SExpr -> Context Bool
+checkNumeric = undefined
+
+checkBoolean :: SExpr -> Context Bool
+checkBoolean = undefined
 
 checkStatement :: Statement -> Context SStatement
-checkStatement = \case
-  Expr expr -> SExpr <$> checkExpr expr
-  stmt@(Declare (Bind{..})) ->
-    if not $ defined bind
-      then return $ SDecl bind
-      else Left $ Redeclaration (bindName bind) stmt
-  stmt@(Define (Bind{..}) expr) ->
-    if not $ defined bind
-      then SDef bind <$> checkExpr expr
-      else Left $ Redeclaration (bindName bind) stmt
+checkStatement statement = do 
+  vars <- lift $ gets variables
+  case statement of
+    Expr expr -> SExpr <$> checkExpr expr
+    Declare bind@Bind{..} -> 
+      if defined bindName vars
+        then throwE $ Redeclaration bindName statement
+        else return $ SDecl bind
+    Define bind@Bind{..} expr ->
+      if defined bindName vars
+        then throwE $ Redeclaration bindName statement
+        else SDef bind <$> checkExpr expr
 
-checkFunction :: Function -> Either SemanticError SFunction
+checkFunction :: Function -> Context SFunction
 checkFunction Function{..} = 
   SFunction funcType funcName args <$> mapM checkStatement body
