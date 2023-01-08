@@ -52,6 +52,7 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - gustc
+    - optparse-applicative
 
 tests:
   gustc-test:

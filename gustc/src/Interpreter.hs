@@ -13,8 +13,8 @@ import qualified Data.Map as Map
 import Data.Text (Text)
 import Control.Monad ( unless, when, void )
 import Control.Monad.Trans ( lift )
-import Control.Monad.Trans.Except ( ExceptT, throwE )
-import Control.Monad.Trans.State ( get, gets, modify, put, State )
+import Control.Monad.Trans.Except ( ExceptT, throwE, runExceptT )
+import Control.Monad.Trans.State ( get, gets, modify, put, State, evalState )
 
 import Ast
 import SAst
@@ -57,21 +57,27 @@ data Value
   deriving (Eq, Show)
 
 -- | Interprets a program.
-interpret :: SProgram -> Runtime ExitCode
-interpret program = do
-  void $ initialize program
-  symbolTable <- lift get
-  case getFunction "main" symbolTable of
-    Nothing  -> throwE $ NoMain $ functionNames symbolTable
-    Just fxn -> do
-      let mainReturnType = sFuncType fxn
-      unless
-        (mainReturnType == IntType)
-        (throwE $ NonIntegerExitCode mainReturnType)
-      returnValue <- apply fxn
-      case returnValue of
-        IntVal exitCode -> return exitCode
-        _ -> error "This should never happen!"
+interpret :: SProgram -> Either RuntimeError ExitCode
+interpret program = evalState (runExceptT  computation) emptyWorld
+  where
+    emptyWorld :: SymbolTable
+    emptyWorld = SymbolTable Map.empty Map.empty
+
+    computation :: Runtime ExitCode
+    computation = do
+      void $ initialize program
+      symbolTable <- lift get
+      case getFunction "main" symbolTable of
+        Nothing  -> throwE $ NoMain $ functionNames symbolTable
+        Just fxn -> do
+          let mainReturnType = sFuncType fxn
+          unless
+            (mainReturnType == IntType)
+            (throwE $ NonIntegerExitCode mainReturnType)
+          returnValue <- apply fxn
+          case returnValue of
+            IntVal exitCode -> return exitCode
+            _ -> error "This should never happen!"
 
 initialize :: SProgram -> Runtime ()
 initialize (SProgram fxns) = lift $ put $

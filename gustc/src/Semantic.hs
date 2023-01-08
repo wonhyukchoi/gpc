@@ -11,8 +11,8 @@ import qualified Data.Map as Map
 
 import Control.Monad ( unless, when, void )
 import Control.Monad.Trans (lift)
-import Control.Monad.Trans.Except ( ExceptT, throwE )
-import Control.Monad.Trans.State ( get, gets, modify, State )
+import Control.Monad.Trans.Except ( ExceptT, throwE, runExceptT )
+import Control.Monad.Trans.State ( get, gets, modify, State, evalState )
 import Data.Text (Text)
 
 import Ast
@@ -56,7 +56,7 @@ import SAst
 data Env = Env { variables :: Map.Map Text Type
                , functions :: Map.Map Text Function
                }
-  
+              
 addVar :: (Text, Type) -> Env -> Env
 addVar (varName, varType) Env{..} = Env newVars functions
   where newVars = Map.insert varName varType variables
@@ -78,8 +78,10 @@ type Context = ExceptT SemanticError (State Env)
 
 -- | Semantic analysis.
 -- Transforms an AST into a SAst.
-analyze :: Program -> Context SProgram
-analyze (Program functions) = SProgram <$> mapM checkFunction functions
+analyze :: Program -> Either SemanticError SProgram
+analyze (Program functions) = evalState (runExceptT computation) nullEnv
+  where computation = SProgram <$> mapM checkFunction functions
+        nullEnv = Env Map.empty Map.empty
 
 isDefined :: Ord k => k -> Map.Map k v -> Bool
 isDefined = Map.member

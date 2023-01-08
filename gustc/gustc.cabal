@@ -51,6 +51,7 @@ library
 executable gustc-exe
   main-is: Main.hs
   other-modules:
+      Config
       Paths_gustc
   hs-source-dirs:
       app
@@ -61,6 +62,7 @@ executable gustc-exe
     , gustc
     , megaparsec
     , mtl
+    , optparse-applicative
     , parser-combinators
     , text
     , transformers
