@@ -53,7 +53,7 @@ data Bind = Bind {bindType :: Type, bindName :: Text} deriving (Show, Eq)
 
 data Statement
   = Expr Expr
-  -- | Return Expr
+  | Return Expr
   | Declare Bind 
   | Define Bind Expr
   -- | If Expr Statement

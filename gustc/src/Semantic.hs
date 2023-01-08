@@ -65,6 +65,7 @@ data SemanticError
   = UndefinedSymbol Text Expr
   | Redeclaration Text Statement
   | TypeError {expected :: [Type], got :: Type, errExpr :: Expr}
+  | AssignmentError { assignLhs :: Expr, assignRhs :: Expr }
   deriving (Show)
 
 type Context = ExceptT SemanticError (State Env)
@@ -86,6 +87,11 @@ isDefined = Map.member
 access :: Ord k => k -> Map.Map k v -> Maybe v
 access = Map.lookup
 
+assertSame :: Expr -> Type -> Type -> Context ()
+assertSame expr type1 type2 = when
+  (type1 /= type2)
+  (throwE (TypeError [type1] type2 expr))
+
 checkExpr :: Expr -> Context TypedExpr
 checkExpr expr = case expr of
   IntLiteral int -> return (IntType, SIntLiteral int)
@@ -93,38 +99,42 @@ checkExpr expr = case expr of
   FloatLiteral f -> return (FloatType, SFloatLiteral f)
   CharLiteral char -> return (CharType, SCharLiteral char)
   BoolLiteral bool -> return (BoolType, SBoolLiteral bool)
-  Var variable -> do
+
+  Var varName -> do
     vars <- lift $ gets variables
-    case access variable vars of
-      Nothing -> throwE $ UndefinedSymbol variable expr
-      Just varType -> return (varType, LValue $ SVar variable)
+    case access varName vars of
+      Nothing -> throwE $ UndefinedSymbol varName expr
+      Just varType -> return (varType, LValue $ SVar varName)
+
   BinaryOp binOp lhs rhs -> do
     lhs'@(lhsType, _) <- checkExpr lhs
     rhs'@(rhsType, _) <- checkExpr rhs
+    void $ assertSame' lhsType rhsType
+
     let sexpr       = SBinaryOp binOp lhs' rhs'
-        arithExpr op = assertSameAll [lhsType, rhsType]
-                         >> assertNumeric lhsType
-                         >> return (lhsType, SBinaryOp op lhs' rhs')
-        compareExpr op = assertSameAll [lhsType, rhsType]
-                        >> assertNumeric lhsType
-                        >> return (BoolType, SBinaryOp op lhs' rhs')
-        booleanExpr op = assertSameAll [lhsType, rhsType]
-                        >> assertBoolean lhsType
-                        >> return (BoolType, SBinaryOp op lhs' rhs')
+        arithExpr   = assertNumeric lhsType >> return (lhsType, sexpr)
+        compareExpr = assertNumeric lhsType >> return (BoolType, sexpr)
+        booleanExpr = assertBoolean lhsType >> return (BoolType, sexpr)
+
     case binOp of
-      Add -> arithExpr Add
-      Sub -> arithExpr Sub
-      Mult -> arithExpr Mult
-      Div -> arithExpr Div
-      Power -> arithExpr Power
-      Lt -> compareExpr Lt
-      Gt -> compareExpr Gt
-      Lte -> compareExpr Lte
-      Gte -> compareExpr Gte
-      And -> booleanExpr And
-      Or -> booleanExpr Or
-      Assign -> undefined
-      Eq -> undefined
+      Add   -> arithExpr
+      Sub   -> arithExpr
+      Mult  -> arithExpr
+      Div   -> arithExpr 
+      Power -> arithExpr 
+      Lt    -> compareExpr 
+      Gt    -> compareExpr 
+      Lte   -> compareExpr 
+      Gte   -> compareExpr 
+      And   -> booleanExpr 
+      Or    -> booleanExpr 
+
+      -- In the future, this will be replaced with the Eq typeclass.
+      Eq -> return (lhsType, sexpr)
+
+      Assign -> case snd lhs' of
+        LValue _ -> return (lhsType, sexpr)
+        _ -> throwE $ AssignmentError lhs rhs
 
   UnaryOp unaryOp expr' -> do
     typedExpr@(exprType, _) <- checkExpr expr'
@@ -138,16 +148,9 @@ checkExpr expr = case expr of
       IntType   -> True
       FloatType -> True
       _         -> False
-
-    assertSame :: Type -> Type -> Context ()
-    assertSame type1 type2 = when
-      (type1 /= type2)
-      (throwE (TypeError [type1] type2 expr))
-
-    assertSameAll :: [Type] -> Context ()
-    assertSameAll []         = return ()
-    assertSameAll [_]        = return ()
-    assertSameAll (x1:x2:xs) = assertSame x1 x2 >> assertSameAll (x1:xs)
+    
+    assertSame' :: Type -> Type -> Context ()
+    assertSame' = assertSame expr
 
     assertNumeric :: Type -> Context ()
     assertNumeric varType = unless
@@ -160,18 +163,26 @@ checkExpr expr = case expr of
       (throwE (TypeError [BoolType] varType expr))
 
 
-checkStatement :: Statement -> Context SStatement
-checkStatement statement = do 
+checkStatement :: Function -> Statement -> Context SStatement
+checkStatement Function{..} statement = do 
   env <- lift get
   let vars = variables env
+
   case statement of
     Expr expr -> SExpr <$> checkExpr expr
+
+    Return expr -> do
+      typedExpr@(exprType, _) <- checkExpr expr
+      void $ assertSame expr funcType exprType
+      return $ SReturn typedExpr 
+
     Declare bind@Bind{..} -> 
       if isDefined bindName vars
         then throwE $ Redeclaration bindName statement
         else do
           lift $ modify $ addVar (bindName, bindType)
           return $ SDecl bind
+
     Define bind@Bind{..} expr ->
       if isDefined bindName vars
         then throwE $ Redeclaration bindName statement
@@ -180,5 +191,5 @@ checkStatement statement = do
           SDef bind <$> checkExpr expr
 
 checkFunction :: Function -> Context SFunction
-checkFunction Function{..} = 
-  SFunction funcType funcName args <$> mapM checkStatement body
+checkFunction function@Function{..} = 
+  SFunction funcType funcName args <$> mapM (checkStatement function) body

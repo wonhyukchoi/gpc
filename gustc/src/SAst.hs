@@ -28,6 +28,7 @@ data SExpr
 
 data SStatement
   = SExpr TypedExpr
+  | SReturn TypedExpr
   | SDecl Bind
   | SDef  Bind TypedExpr
   deriving (Eq, Show)

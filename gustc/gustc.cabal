@@ -26,6 +26,7 @@ source-repository head
 library
   exposed-modules:
       Ast
+      Interpreter
       Parser.Common
       Parser.Lexer
       Parser.Parser
