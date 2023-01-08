@@ -10,6 +10,8 @@ import Ast
 
 data LValue = SVar Text deriving (Eq, Show)
 
+type TypedExpr = (Type, SExpr)
+
 -- | Semantically typed expressions.
 data SExpr
   = SIntLiteral Integer
@@ -17,17 +19,17 @@ data SExpr
   | SFloatLiteral Double
   | SCharLiteral Char
   | SBoolLiteral Bool
-  | SBinaryOp BinOp SExpr SExpr
-  | SUnaryOp UnaryOp SExpr
+  | SBinaryOp BinOp TypedExpr TypedExpr
+  | SUnaryOp UnaryOp TypedExpr
   | LValue LValue
-  | SAssign LValue SExpr
+  | SAssign LValue TypedExpr
   -- | FunctionCall Text [Expr]
   deriving (Eq, Show)
 
 data SStatement
-  = SExpr SExpr
+  = SExpr TypedExpr
   | SDecl Bind
-  | SDef  Bind SExpr
+  | SDef  Bind TypedExpr
   deriving (Eq, Show)
 
 data SFunction = SFunction { sFuncType :: Type

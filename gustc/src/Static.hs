@@ -9,5 +9,5 @@ import SAst
 -----------------------------------------------------------------------------
 
 -- | Runs static analysis.
-analyze :: SAst -> ()
+analyze :: SProgram -> ()
 analyze = undefined
