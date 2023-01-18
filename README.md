@@ -1,12 +1,14 @@
 # Gust
-This is the repository for the standard, interpreter, compiler, and the standard library for the `Gust` language.
+Welcome to the `Gust` language!
 
-`Gust` is designed to be an safe and fast application-building language with many benefits:
-* _Safe_: immutable by default, and garbage collection avoids most segmentation faults.
-* _Prototypable_: `Gust` can be interpreted, making it easy to prototype.
-* _Fast_: When needed, `Gust` can be compiled 
-* _Expressive_: Use functional idioms of `map`, `filter`, and `fold`, abstract data types, and higher order functions. Use `trait`s for polymorphism.
-* _Easy_: Garbage collection: you don't need to worry about memory management. Syntax: familiar syntax you've been using all your software career.
+The `Gust` language is designed with a simple core philsophy: ergonomics. Computing was first focused on space complexity, and then on time complexity. But now with the advent of fast and big hardware, we can optimize for _developer productivity_. Not all -- in fact, many -- applications do not need to be performance sensitive. But our time is worth a lot, and `Gust` tries to make sure our time is spent on the ideas instead of the nitty-gritty details. 
+
+The philsophy of `Gust` manifests itself in the following forms:
+* Automatic memory management (garbage collection). No need to think about whether this pointer be shared or calculate the variable's lifetime.
+* Fast development loop: `Gust` was designed to be easily interpreted so that developers don't need to wait for compilation. But when you need the speed, it can be compiled.
+* Functional idioms: `Gust` relies heavily on the functional idioms such as `map`, `filter`, `fold`, etc. 
+* Immutable by default: Make bugs hard to write. Changing state is an ever-present source of bugs, so avoid the headache.
+
 
 ## Syntax
 GPC syntax is largely influenced by `Rust`.
